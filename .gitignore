@@ -5,3 +5,7 @@ venv/
 __pycache__/
 *.pyc
 
+
+# Ortam değişkenleri ve veritabanı dosyaları
+.env.*
+*.db

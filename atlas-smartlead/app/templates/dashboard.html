@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas | Kayıt Paneli</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #081830;
+        }
+
+        header {
+            background: #081830;
+            color: white;
+            padding: 24px;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 32px auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            overflow-x: auto;
+        }
+
+        a { color: #bcd7ff; }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e1e7f0;
+        }
+
+        th { background: #edf2f9; }
+
+        button {
+            background: #123b70;
+            color: white;
+            border: 0;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #status { margin: 16px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ATLAS | Kayıt Paneli</h1>
+        <a href="/">Ana Sayfaya Dön</a>
+    </header>
+
+    <main>
+        <section class="panel">
+            <h2>İletişim ve talep kayıtları</h2>
+            <button id="refresh">Kayıtları Yenile</button>
+            <p id="status" aria-live="polite"></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>İsim</th>
+                        <th>Şirket</th>
+                        <th>E-posta</th>
+                        <th>Mesaj</th>
+                        <th>Tarih</th>
+                    </tr>
+                </thead>
+                <tbody id="leads"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        const leadsBody = document.getElementById("leads");
+        const status = document.getElementById("status");
+
+        async function loadLeads() {
+            status.textContent = "Kayıtlar yükleniyor...";
+            leadsBody.replaceChildren();
+
+            try {
+                const response = await fetch("/api/leads");
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Kayıtlar alınamadı.");
+                }
+
+                for (const lead of data.leads) {
+                    const row = document.createElement("tr");
+
+                    for (const value of [
+                        lead.id,
+                        lead.name,
+                        lead.company,
+                        lead.email,
+                        lead.message,
+                        lead.created_at
+                    ]) {
+                        const cell = document.createElement("td");
+                        cell.textContent = value ?? "";
+                        row.appendChild(cell);
+                    }
+
+                    leadsBody.appendChild(row);
+                }
+
+                status.textContent = data.leads.length + " kayıt bulundu.";
+            } catch (error) {
+                status.textContent = "Hata: " + error.message;
+            }
+        }
+
+        document.getElementById("refresh").addEventListener("click", loadLeads);
+        loadLeads();
+    </script>
+</body>
+</html>
