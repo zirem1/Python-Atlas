@@ -52,7 +52,7 @@ def sohbet():
 def lead_olustur():
     """Yeni bir kayıt oluşturur."""
     data = request.get_json(silent=True) or {}
-
+    print(data)
     name = data.get("name")
     email = data.get("email", "")
     company = data.get("company", "")
