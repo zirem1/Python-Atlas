@@ -26,6 +26,7 @@ class AIService:
         """Groq API üzerinden yanıt üretir; API yoksa demo yanıtı verir."""
 
         api_key = Config.GROQ_API_KEY
+      print("ATLAS AKTIF GROQ MODELI:", Config.GROQ_MODEL, flush=True)
 
         if not api_key:
             return (
