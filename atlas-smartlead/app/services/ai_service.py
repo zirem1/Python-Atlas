@@ -1,6 +1,6 @@
+
 import requests
 from config import Config
-
 
 
 BUSINESS_CONTEXT = """
@@ -159,14 +159,13 @@ LOJİSTİK DOĞRULUK KURALLARI
 """
 
 
-
 class AIService:
     @staticmethod
     def yanit_uret(mesaj):
         """Groq API üzerinden yanıt üretir; API yoksa demo yanıtı verir."""
 
         api_key = Config.GROQ_API_KEY
-      
+
         if not api_key:
             return (
                 "Atlas Demo Asistanı: Mesajını aldım. "
@@ -199,8 +198,21 @@ class AIService:
                 timeout=30,
             )
             response.raise_for_status()
+
             data = response.json()
-            return data["choices"][0]["message"]["content"]
+
+            choice = data["choices"][0]
+            finish_reason = choice.get("finish_reason")
+            yanit = choice["message"]["content"] or ""
+
+            print("Atlas Groq finish_reason:", finish_reason)
+
+            if finish_reason == "length":
+                print(
+                    "UYARI: Atlas yanıtı uzunluk sınırı nedeniyle kesildi."
+                )
+
+            return yanit
 
         except requests.RequestException as e:
             print("Groq bağlantı hatası:", str(e))
