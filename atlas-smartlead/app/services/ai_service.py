@@ -203,6 +203,16 @@ class AIService:
 
             choice = data["choices"][0]
             finish_reason = choice.get("finish_reason")
+           
+            usage = data.get("usage", {})
+
+            print("Atlas prompt_tokens:", usage.get("prompt_tokens"))
+            print("Atlas completion_tokens:", usage.get("completion_tokens"))
+            print("Atlas total_tokens:", usage.get("total_tokens"))
+
+            details = usage.get("completion_tokens_details") or {}
+            print("Atlas reasoning_tokens:", details.get("reasoning_tokens"))
+
             yanit = choice["message"]["content"] or ""
 
             print("Atlas Groq finish_reason:", finish_reason)
