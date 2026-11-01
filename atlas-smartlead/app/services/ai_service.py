@@ -188,6 +188,7 @@ class AIService:
                 {"role": "user", "content": mesaj},
             ],
             "temperature": 0.4,
+           "max_completion_tokens": 6144,
         }
 
         try:
